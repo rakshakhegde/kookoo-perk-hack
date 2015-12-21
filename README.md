@@ -1,5 +1,5 @@
 # Kookoo Perk Hack
-Read the conversations below to understand how the demo works.
+Read the conversations below to understand how the demo call flows and please speak out as closely as in the conversation because the code looks for keywords in your speech.
 
 While conversing please be loud and clear and please be patient for the response as the server needs to process for the first time. Call **08067947469** for the demo.
 
