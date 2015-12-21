@@ -55,7 +55,7 @@ def newCall(args):
 	cid = args.get('cid')
 	response = ET.Element(RESPONSE)
 	ET.SubElement(response, SAY).text = 'Query'
-	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '3'}).text = cid + ext1
+	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '5'}).text = cid + ext1
 	return response
 
 
@@ -83,79 +83,8 @@ def makeSense(transcript):
 	else:
 		return anythingElse()
 
-
-# Services, finally, YAY ^_^
-def bookUber():
-	args = flask.request.args
-	cid = args.get('cid')
-	response = ET.Element(RESPONSE)
-	ET.SubElement(response, SAY).text = 'Booking an Uber taxi. State your pickup and end location'
-	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '3'}).text = cid + ext2
-	ET.SubElement(response, 'gotourl').text = 'http://kookoo-1161.appspot.com/uber1'
-	return response
-
-
-@app.route('/uber1')
-def uber1():
-	args = flask.request.args
-	cid = args.get('cid')
-	pickLoc = 'Electronic City'
-	endLoc = 'Majestic'
-	response = ET.Element(RESPONSE)
-	ET.SubElement(response, SAY).text = 'You will be picked up from'
-	ET.SubElement(response, SAY).text = pickLoc
-	ET.SubElement(response, SAY).text = 'and dropped off at'
-	ET.SubElement(response, SAY).text = endLoc
-	ET.SubElement(response, SAY).text = pickLoc
-	ET.SubElement(response, SAY).text = 'and dropped off at'
-	ET.SubElement(response, SAY).text = endLoc
-	ET.SubElement(response, SAY).text = 'Please wait'
-	ET.SubElement(response, 'playaudio').text = 'https://dl2.pushbulletusercontent.com/orAPQ5EltMnhdwCzbfx3DuUnhaN1yTV5/output.mp3'
-	fare = 263 if randint(0, 1) else 346
-	ET.SubElement(response, SAY).text = 'Your total fare is'
-	ET.SubElement(response, 'say-as', {'format': '402', 'lang': 'EN'}).text = str(fare)
-	ET.SubElement(response, SAY).text = 'Details of the driver will be sent by SMS to you. Have a happy journey.'
-	xmlOutput = ET.tostring(response, encoding='utf8', method='xml')
-	ET.SubElement(response, TAG_HANGUP)
-	type=0
-	return xmlOutput, 200, {'Content-Type': 'application/xml; charset=utf-8'}
-
-def bookFood():
-	response = ET.Element(RESPONSE)
-	args = flask.request.args
-	cid = args.get('cid')
-	response = ET.Element(RESPONSE)
-	ET.SubElement(response, SAY).text = 'What would you like to eat?'
-	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '2'}).text = cid + ext3
-	getS2T(cid + ext3)
-	ET.SubElement(response, SAY).text = 'Pizza confirmed'
-	ET.SubElement(response, SAY).text = 'Any particular toppings you would like?'
-	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '2'}).text = cid + ext4
-	getS2T(cid + ext4)
-	ET.SubElement(response, SAY).text = 'Would you like pickup or delivery?'
-	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '2'}).text = cid + ext4
-	ET.SubElement(response, SAY).text = 'You can pick up your'
-	ET.SubElement(response, SAY).text = 'Pizza'
-	ET.SubElement(response, SAY).text = 'at your nearest Dominos'
-	ET.SubElement(response, SAY).text = 'Please wait'
-	ET.SubElement(response, 'playaudio').text = 'https://dl2.pushbulletusercontent.com/orAPQ5EltMnhdwCzbfx3DuUnhaN1yTV5/output.mp3'
-	ET.SubElement(response, SAY).text = 'Your total price is'
-	fare = 250 if randint(0, 1) else 300
-	ET.SubElement(response, 'say-as', {'format': '402', 'lang': 'EN'}).text = str(fare)
-	ET.SubElement(response, SAY).text = 'Details will be sent as SMS to you. Bye.'
-	xmlOutput = ET.tostring(response, encoding='utf8', method='xml')
-	ET.SubElement(response, TAG_HANGUP)
-	type=1
-	return response
-
-
-def anythingElse():
-	response = ET.Element(RESPONSE)
-	ET.SubElement(response, SAY).text = 'Some other awesome service'
-	return response
-
-
 def hangup():
+	# To send confirmation SMS
 	if type==0:
 		urlfetch.Fetch('http://www.kookoo.in/outbound/outbound_sms.php?phone_no='+cid+'&api_key=KK268a2e81e84db444386421ac2d771fd8&message=You+will+be+picked+up+by+Ravindra+Raju+His+contact+number+is+09886598645.+Expect+arrival+within+15+mins.%0D%0ABon+Voyage+%3A%29&senderid=KOOKOO')
 	elif type==1:
@@ -172,3 +101,75 @@ def page_not_found(e):
 def application_error(e):
 	"""Return a custom 500 error."""
 	return 'Sorry, unexpected error: {}'.format(e), 500
+
+
+
+# Services, finally, YAY ^_^
+def bookUber():
+	type=0
+	args = flask.request.args
+	cid = args.get('cid')
+	response = ET.Element(RESPONSE)
+	ET.SubElement(response, SAY).text = 'Booking an Uber cab. State your pickup and end location'
+	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '5'}).text = cid + ext2
+	ET.SubElement(response, 'gotourl').text = 'http://kookoo-1161.appspot.com/uber1'
+	return response
+
+
+@app.route('/uber1')
+def uber1():
+	args = flask.request.args
+	cid = args.get('cid')
+	response = ET.Element(RESPONSE)
+	ET.SubElement(response, SAY).text = 'You will be picked up from'
+	ET.SubElement(response, SAY).text = pickLoc
+	ET.SubElement(response, SAY).text = 'and dropped off at'
+	ET.SubElement(response, SAY).text = endLoc
+	ET.SubElement(response, SAY).text = '. Please wait.'
+	ET.SubElement(response, 'playaudio').text = 'https://dl2.pushbulletusercontent.com/orAPQ5EltMnhdwCzbfx3DuUnhaN1yTV5/output.mp3'
+	fare = 263 if randint(0, 1) else 346
+	ET.SubElement(response, SAY).text = 'Your total fare is'
+	ET.SubElement(response, 'say-as', {'format': '402', 'lang': 'EN'}).text = str(fare)
+	ET.SubElement(response, SAY).text = 'Details of the driver will be sent by SMS to you. Have a happy journey.'
+	xmlOutput = ET.tostring(response, encoding='utf8', method='xml')
+	ET.SubElement(response, TAG_HANGUP)
+	return xmlOutput, 200, {'Content-Type': 'application/xml; charset=utf-8'}
+
+def bookFood():
+	type=1
+	response = ET.Element(RESPONSE)
+	args = flask.request.args
+	cid = args.get('cid')
+	response = ET.Element(RESPONSE)
+	ET.SubElement(response, SAY).text = 'What would you like to eat?'
+	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '5'}).text = cid + ext3
+	getS2T(cid + ext3)
+	ET.SubElement(response, SAY).text = 'Pizza confirmed.'
+	ET.SubElement(response, SAY).text = 'Any particular toppings you would like?'
+	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '5'}).text = cid + ext4
+	getS2T(cid + ext4)
+	ET.SubElement(response, SAY).text = 'Would you like pickup or delivery?'
+	ET.SubElement(response, TAG_RECORD, {'format': 'wav', 'maxduration': '5'}).text = cid + ext4
+	ET.SubElement(response, SAY).text = 'You can pick up your'
+	ET.SubElement(response, SAY).text = 'Pizza'
+	ET.SubElement(response, SAY).text = 'at your nearest Dominos.'
+	ET.SubElement(response, SAY).text = 'Please wait'
+	ET.SubElement(response, 'playaudio').text = 'https://dl2.pushbulletusercontent.com/orAPQ5EltMnhdwCzbfx3DuUnhaN1yTV5/output.mp3'
+	ET.SubElement(response, SAY).text = 'Your total price is'
+	fare = 250 if randint(0, 1) else 300
+	ET.SubElement(response, 'say-as', {'format': '402', 'lang': 'EN'}).text = str(fare)
+	ET.SubElement(response, SAY).text = 'Details will be sent as SMS to you. Bon Appetite.'
+	xmlOutput = ET.tostring(response, encoding='utf8', method='xml')
+	ET.SubElement(response, TAG_HANGUP)
+	return response
+
+
+def anythingElse():
+	response = ET.Element(RESPONSE)
+	ET.SubElement(response, SAY).text = 'To do other services. Please await...'
+	ET.SubElement(response, TAG_HANGUP)
+	return response
+
+
+pickLoc = 'Electronic City'
+endLoc = 'Majestic'
